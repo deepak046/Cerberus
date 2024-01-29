@@ -1,14 +1,16 @@
 
-
+<!-- LAUNCH file to run VILO in a1 robot-->
 <launch>
 
-    <!-- VINS config -->
+    <!-- VILO config -->
     <param name="vilo_config_file" type="string" value="$(find vilo)/config/a1_config/hardware_a1_vilo_config.yaml" />
     
     <node name="vilo" pkg="vilo" type="vilo"
-            args="$(find vilo)/config/a1_config/hardware_a1_vilo_config.yaml" output="screen"/>
+            args="$(find vilo)/config/a1_config/hardware_a1_vilo_config.yaml" output="screen" />
+    <!-- node name="vinsfusion" pkg="vins" type="vins_node"
+            args="$(find vilo)/config/a1_config/hardware_a1_vilo_config.yaml" output="screen" -->
     <node name="vinsloopfusion" pkg="loop_fusion" type="loop_fusion_node"
-            args="$(find vilo)/config/a1_config/hardware_a1_vilo_config.yaml" />
+            args="$(find vilo)/config/a1_config/hardware_a1_vilo_config.yaml" output="screen" />
 
     <!-- new config when the robot chassis is on the ground, imu is 142mm above the ground, publish a fix transformation -->
     <node pkg="tf" type="static_transform_publisher" name="ground_to_world"
@@ -18,13 +20,13 @@
           args="-0.0 0.0 -0.0 0.0 0.0 0.0 /body /a1_body 1000" />
 
     <node pkg="tf" type="static_transform_publisher" name="base_to_a1_body"
-          args="-0.0 0.0 -0.0 0.0 0.0 0.0 /a1_body /base  1000" />
+          args="-0.0 0.0 -0.0 0.0 0.0 0.0 /a1_body /base_link  1000" />
 
     <!-- <node pkg="tf" type="static_transform_publisher" name="camera_to_downward_camera"
           args="0.0 0.1152 0.0  0.0 0.0 -0.785398 /camera /camera_downward_depth_optical_frame 1000" />    -->
 
     <!-- visualization using robot description -->
-    <param name="robot_description" textfile="$(find vilo)/urdf/a1_description/urdf/a1.urdf" />
+    <param name="robot_description" textfile="$(find a1_description)/urdf/a1.urdf" />
     <remap from="/joint_states" to="/a1_filterd_joint" />
     <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
 

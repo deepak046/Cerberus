@@ -1,0 +1,255 @@
+<?xml version="1.0" ?>
+<robot name="a1_highlevel_robot" xmlns:xacro="http://ros.org/wiki/xacro">
+
+  <xacro:arg name="laser_visual" default="false"/> <!--  visualize laser in gazebo -->
+  <xacro:arg name="imu_visual"   default="false"/> <!--  visualize imu in gazebo -->
+
+  <xacro:arg name="lidar"         default="true"/> <!--  add lidar (hokuyo UST-10LX) simulation -->
+  <xacro:arg name="depth_camera"  default="false"/> <!--  add depth camera (realsense D435) simulation -->
+
+  <xacro:arg name="fixed_legs"   default="false"/> <!--  if true fix leg joints in place, needed for high level simulation -->
+
+  <xacro:include filename="$(find a1_description)/urdf/a1_const.xacro"/>
+  <xacro:include filename="$(find a1_description)/urdf/backpack_const_v2.xacro"/>
+  <xacro:include filename="$(find a1_description)/urdf/common_properties.xacro"/>
+  <xacro:include filename="$(find a1_description)/urdf/hokuyo_ust10.urdf.xacro" />
+  <xacro:include filename="$(find a1_description)/urdf/_d435.urdf.xacro" /> 
+
+  <!-- choose between fixed or free leg joints -->
+  <xacro:if value="$(arg fixed_legs)">
+    <xacro:include filename="$(find a1_description)/urdf/leg_fixed.xacro"/>
+  </xacro:if>
+  <xacro:unless value="$(arg fixed_legs)">
+    <xacro:include filename="$(find a1_description)/urdf/leg.xacro"/>
+  </xacro:unless>
+
+  <xacro:property name="laser_topic" value="/scan"/>
+
+
+  <!-- root link, on the ground just below the model origin -->
+  <link name="base_footprint">
+   <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <box size="0.001 0.001 0.001" />
+      </geometry>
+    </visual>
+  </link>
+  <!-- when used for the robot state publisher not in simulation, this tf won't be broadcasted -->
+  <joint name="base_link_joint" type="fixed">
+    <origin xyz="0.0 0 ${base_link_height}" rpy="0 0 0" />
+    <parent link="base_footprint"/>
+    <child link="base_link" />
+  </joint>
+
+
+  <!-- Robot Trunk -->
+  <link name="base_link">
+    <visual>
+        <origin rpy="0 0 0" xyz="0 0 0"/>
+        <geometry>
+            <mesh filename="package://a1_description/meshes/trunk.dae" scale="1 1 1"/>
+        </geometry>
+        <material name="orange"/>
+    </visual>
+    <visual>
+        <origin xyz="${backpack_mesh_x} ${backpack_mesh_y} ${backpack_mesh_z}" rpy="0 0 0"/>
+        <geometry>
+            <mesh filename="package://a1_description/meshes/backpack_mesh.stl" scale="0.001 0.001 0.001"/>
+        </geometry>
+        <material name="grey"/>
+    </visual>
+    <!-- <visual>
+      <origin xyz="${backpack_x} ${backpack_y} ${backpack_z}" rpy="0 0 0"/>
+      <geometry>
+        <box size="${backpack_length} ${backpack_width} ${backpack_height}"/>
+      </geometry>
+      <material name="dark"/>
+    </visual> -->
+
+
+
+    <!-- <visual>
+      <origin xyz="${FR_leg_x} ${FR_leg_y} ${FR_leg_z}" rpy="0 0 0"/>
+      <geometry>
+        <box size="${leg_length} ${leg_length} ${leg_height}"/>
+      </geometry>
+      <material name="orange"/>
+    </visual>
+    <visual>
+      <origin xyz="${FL_leg_x} ${FL_leg_y} ${FL_leg_z}" rpy="0 0 0"/>
+      <geometry>
+        <box size="${leg_length} ${leg_length} ${leg_height}"/>
+      </geometry>
+      <material name="orange"/>
+    </visual>
+    <visual>
+      <origin xyz="${BR_leg_x} ${BR_leg_y} ${BR_leg_z}" rpy="0 0 0"/>
+      <geometry>
+        <box size="${leg_length} ${leg_length} ${leg_height}"/>
+      </geometry>
+      <material name="orange"/>
+    </visual>
+    <visual>
+      <origin xyz="${BL_leg_x} ${BL_leg_y} ${BL_leg_z}" rpy="0 0 0"/>
+      <geometry>
+        <box size="${leg_length} ${leg_length} ${leg_height}"/>
+      </geometry>
+      <material name="orange"/>
+    </visual> -->
+    
+    <collision>
+        <origin rpy="0 0 0" xyz="${boxcoll_x} ${boxcoll_y} ${boxcoll_z}"/>
+        <geometry>
+            <box size="${boxcoll_length} ${boxcoll_width} ${boxcoll_height}"/>
+        </geometry>
+        <!-- <origin rpy="0 0 0" xyz="0 0 0"/>
+        <geometry>
+            <box size="${trunk_length} ${trunk_width} ${trunk_height}"/>
+        </geometry> -->
+    </collision>
+    <inertial>
+        <origin rpy="0 0 0" xyz="${trunk_com_x} ${trunk_com_y} ${trunk_com_z}"/>
+        <mass value="50" /> <!-- <mass value="${trunk_mass}"/> -->
+        <!-- <inertia
+            ixx="${trunk_ixx}" ixy="${trunk_ixy}" ixz="${trunk_ixz}"
+            iyy="${trunk_iyy}" iyz="${trunk_iyz}"
+            izz="${trunk_izz}"/> -->
+        <inertia ixx="50.0" ixy="0.0" ixz="0.0"
+            iyy="50.0" iyz="0.0"
+            izz="50.0" />  
+    </inertial>
+    </link>
+
+
+    <xacro:leg name="FR" mirror="-1" mirror_dae="False" front_hind="1" front_hind_dae="True">
+        <origin rpy="0 0 0" xyz="${leg_offset_x} ${-leg_offset_y} 0"/>
+    </xacro:leg>
+
+    <xacro:leg name="FL" mirror="1" mirror_dae="True" front_hind="1" front_hind_dae="True">
+        <origin rpy="0 0 0" xyz="${leg_offset_x} ${leg_offset_y} 0"/>
+    </xacro:leg>
+
+    <xacro:leg name="RR" mirror="-1" mirror_dae="False" front_hind="-1" front_hind_dae="False">
+        <origin rpy="0 0 0" xyz="${-leg_offset_x} ${-leg_offset_y} 0"/>
+    </xacro:leg>
+
+    <xacro:leg name="RL" mirror="1" mirror_dae="True" front_hind="-1" front_hind_dae="False">
+        <origin rpy="0 0 0" xyz="${-leg_offset_x} ${leg_offset_y} 0"/>
+    </xacro:leg>
+
+
+ 
+    <!-- IMU -->
+    <joint name="imu_joint" type="fixed">
+        <parent link="base_link"/>
+        <child link="imu_link"/>
+        <origin rpy="0 0 0" xyz="0 0 0"/>
+    </joint>
+
+    <link name="imu_link">
+        <inertial>
+            <mass value="0.001"/>
+            <origin rpy="0 0 0" xyz="0 0 0"/>
+            <inertia ixx="0.0001" ixy="0" ixz="0" iyy="0.0001" iyz="0" izz="0.0001"/>
+        </inertial>
+        <visual>
+            <origin rpy="0 0 0" xyz="0 0 0"/>
+            <geometry>
+                <box size="0.001 0.001 0.001"/>
+            </geometry>
+            <material name="red"/>
+        </visual>
+        <collision>
+            <origin rpy="0 0 0" xyz="0 0 0"/>
+            <geometry>
+                <box size=".001 .001 .001"/>
+            </geometry>
+        </collision>
+    </link>
+
+
+  
+  <!-- Hokuyo UST10 -->
+  <xacro:if value="$(arg lidar)">
+    <xacro:hokuyo_ust10_mount topic="${laser_topic}" prefix="hokuyo" parent_link="base_link" laser_visual="$(arg laser_visual)">
+      <origin xyz="${laser_base_x} ${laser_base_y} ${laser_base_z}" rpy="0 0 0" />
+    </xacro:hokuyo_ust10_mount>
+  </xacro:if>
+
+
+  <!-- Realsense D435 depth camera -->
+  <xacro:if value="$(arg depth_camera)">
+    <xacro:sensor_d435 parent="base_link" color_width="${rs_color_width}" color_height="${rs_color_height}" color_fps="${rs_color_fps}" 
+        depth_width="${rs_depth_width}" depth_height="${rs_depth_height}" depth_fps="${rs_depth_fps}">
+      <origin xyz="${camera_base_x} ${camera_base_y} ${camera_base_z}" rpy="0 0 0"/>
+    </xacro:sensor_d435>
+  </xacro:if>
+
+
+  <!-- Gazebo things -->
+  <gazebo reference="imu_link">
+    <sensor type="imu" name="imu">
+      <always_on>true</always_on>
+      <visualize>$(arg imu_visual)</visualize>
+    </sensor>
+    <material>Gazebo/FlatBlack</material>
+  </gazebo>
+
+  <gazebo>
+    <plugin name="object_controller" filename="libgazebo_ros_planar_move.so">
+      <commandTopic>cmd_vel_sim</commandTopic>
+      <odometryTopic>odom_sim</odometryTopic>
+      <odometryFrame>odom</odometryFrame>
+      <odometryRate>50.0</odometryRate>
+      <robotBaseFrame>base_footprint</robotBaseFrame>
+    </plugin>
+  </gazebo>
+
+
+  <gazebo>
+    <plugin name="imu_plugin" filename="libgazebo_ros_imu.so">
+      <alwaysOn>true</alwaysOn>
+      <bodyName>imu_link</bodyName>
+      <frameName>imu_link</frameName>
+      <topicName>imu</topicName>
+      <serviceName>imu_service</serviceName>
+      <gaussianNoise>0.0</gaussianNoise>
+      <updateRate>0</updateRate>
+      <imu>
+        <noise>
+          <type>gaussian</type>
+          <rate>
+            <mean>0.0</mean>
+            <stddev>2e-4</stddev>
+            <bias_mean>0.0000075</bias_mean>
+            <bias_stddev>0.0000008</bias_stddev>
+          </rate>
+          <accel>
+            <mean>0.0</mean>
+            <stddev>1.7e-2</stddev>
+            <bias_mean>0.1</bias_mean>
+            <bias_stddev>0.001</bias_stddev>
+          </accel>
+        </noise>
+      </imu>
+    </plugin>
+  </gazebo>
+
+  <!-- ground truth -->
+  <gazebo>
+    <plugin name="p3d_base_controller" filename="libgazebo_ros_p3d.so">
+      <alwaysOn>true</alwaysOn>
+      <updateRate>50.0</updateRate>
+      <bodyName>base_footprint</bodyName>
+      <topicName>base_pose_ground_truth</topicName>
+      <gaussianNoise>0.01</gaussianNoise>
+      <frameName>map</frameName>
+      <!-- initialize odometry for fake localization -->
+      <xyzOffsets>0 0 0</xyzOffsets>
+      <rpyOffsets>0 0 0</rpyOffsets>
+    </plugin>
+  </gazebo>
+
+
+</robot>

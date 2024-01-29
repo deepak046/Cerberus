@@ -1,0 +1,37 @@
+<!-- File that launches Cerberus VILO in Unitree A1 -->
+
+<launch>
+    
+    <!-- Using simulated time -->
+    <param name="/use_sim_time" value="true"/>
+    
+    <!-- VILO config -->
+    <param name="vilo_config_file" type="string" value="$(find vilo)/config/deepak_st_config/a1_cerberus_test.yaml" />
+
+    <!-- Runs the node to publish joint_foot data from LowState of Unitree (in Cerberus's format) -->
+    <node name="joint_foot_pub" pkg="vilo" type="joint_foot_pub"
+            args="$(find vilo)/config/deepak_st_config/a1_cerberus_test.yaml" output="screen"/>   
+    
+    <!-- Runs Cerberus vilo node -->
+    <node name="vilo" pkg="vilo" type="vilo"
+            args="$(find vilo)/config/deepak_st_config/a1_cerberus_test.yaml" output="screen"/>
+    <!-- RVIZ visualization -->
+    <node name="rviz" pkg="rviz" type="rviz" args="-d $(find vilo)/config/deepak_st_config/a1_cerberus_rviz.rviz" output="screen" />
+
+    
+    <!-- Static transform publishers (already used in Cerberus) -->
+    <node pkg="tf" type="static_transform_publisher" name="ground_to_world"
+          args="0.0 0.0 0.28 0.0 0.0 0.0 /a1_world /world 100" />
+
+    <node pkg="tf" type="static_transform_publisher" name="body_to_a1_body"
+          args="-0.0 0.0 -0.0 0.0 0.0 0.0 /body /a1_body 100" />
+
+    <node pkg="tf" type="static_transform_publisher" name="base_to_a1_body"
+          args="-0.0 0.0 -0.0 0.0 0.0 0.0 /a1_body /base 100" />
+
+    <!-- visualization using robot description -->
+    <param name="robot_description" textfile="$(find a1_description)/urdf/a1.urdf" />
+    <remap from="/joint_states" to="/a1_filterd_joint" />
+    <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
+
+</launch>

@@ -1,19 +1,56 @@
-cmake_minimum_required(VERSION 2.8.3)
+################################################################################
+# Set minimum required version of cmake, project name and compile options
+################################################################################
+cmake_minimum_required(VERSION 3.0.2)
 project(a1_description)
 
+################################################################################
+# Find catkin packages and libraries for catkin and system dependencies
+################################################################################
 find_package(catkin REQUIRED COMPONENTS
-    genmsg
-    roscpp
-    std_msgs
-    tf
+  urdf
+  xacro
 )
 
+################################################################################
+# Setup for python modules and scripts
+################################################################################
+
+################################################################################
+# Declare ROS messages, services and actions
+################################################################################
+
+################################################################################
+# Declare ROS dynamic reconfigure parameters
+################################################################################
+
+################################################################################
+# Declare catkin specific configuration to be passed to dependent projects
+################################################################################
 catkin_package(
-    CATKIN_DEPENDS
+  CATKIN_DEPENDS urdf xacro
 )
 
+################################################################################
+# Build
+################################################################################
 include_directories(
-    # include
-    ${Boost_INCLUDE_DIR}
-    ${catkin_INCLUDE_DIRS}
+  ${catkin_INCLUDE_DIRS}
 )
+
+################################################################################
+# Install
+################################################################################
+install(DIRECTORY meshes rviz urdf
+  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
+)
+
+catkin_install_python(PROGRAMS
+  src/odom_repub.py
+  src/cmd_vel_controller.py
+  DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+)
+
+################################################################################
+# Test
+################################################################################

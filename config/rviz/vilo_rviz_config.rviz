@@ -387,7 +387,7 @@ Visualization Manager:
       Enabled: true
       Frame Timeout: 15
       Frames:
-        All Enabled: false
+        All Enabled: true
         a1_body:
           Value: true
         a1_world:

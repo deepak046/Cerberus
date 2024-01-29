@@ -20,7 +20,7 @@
           args="-0.0 0.0 -0.0 0.0 0.0 0.0 /a1_body /base  1000" />
           
     <!-- visualization using robot description -->
-    <param name="robot_description" textfile="$(find vilo)/urdf/a1_description/urdf/a1.urdf" />
+    <param name="robot_description" textfile="$(find a1_description)/urdf/a1.urdf" />
     <remap from="/joint_states" to="/a1_filterd_joint" />
     <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
 

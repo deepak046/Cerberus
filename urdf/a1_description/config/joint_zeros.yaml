@@ -1,0 +1,15 @@
+# default joint positions, useb by joint_state_publisher
+
+zeros:
+  FR_hip_joint:   0
+  FR_thigh_joint: 0.79
+  FR_calf_joint:  -1.68
+  FL_hip_joint:   0
+  FL_thigh_joint: 0.79
+  FL_calf_joint:  -1.68
+  RR_hip_joint:   0
+  RR_thigh_joint: 0.79
+  RR_calf_joint:  -1.68
+  RL_hip_joint:   0
+  RL_thigh_joint: 0.79
+  RL_calf_joint:  -1.68

@@ -5,9 +5,9 @@
 imu: 1         
 num_of_cam: 2  
 
-imu_topic: "/hardware_a1/imu"
-image0_topic: "/camera_forward/infra1/image_rect_raw"
-image1_topic: "/camera_forward/infra2/image_rect_raw"
+imu_topic: "/imu"
+image0_topic: "/camera/infra1/image_rect_raw"
+image1_topic: "/camera/infra2/image_rect_raw"
 output_path: "/home/EstimationUser/estimation_ws/src/Cerberus/output"
 
 cam0_calib: "a1_realsense_left.yaml"
@@ -24,6 +24,10 @@ body_T_cam0: !!opencv-matrix
    rows: 4
    cols: 4
    dt: d
+   # data: [ 0, -1,  0, 0.10076, 
+   #         0,  0, -1, 0.025, 
+   #         1,  0,  0, 0.1114, 
+   #         0., 0., 0., 1. ]
    data: [ 0,  0,  1, 0.10076, 
           -1,  0,  0, 0.025, 
            0, -1,  0, 0.1114, 
@@ -33,6 +37,10 @@ body_T_cam1: !!opencv-matrix
    rows: 4
    cols: 4
    dt: d
+   # data: [ 0, -1,  0, 0.10076, 
+   #         0,  0, -1, -0.025, 
+   #         1,  0,  0, 0.1114,  
+   #         0., 0., 0., 1. ]
    data: [ 0,  0,  1, 0.10076, 
           -1,  0,  0, -0.025, 
            0, -1,  0, 0.1114,  

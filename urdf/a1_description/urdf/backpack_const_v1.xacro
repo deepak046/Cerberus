@@ -1,0 +1,75 @@
+<?xml version="1.0"?>
+
+<robot name="backpack_v1_description" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+    <xacro:include filename="$(find a1_description)/urdf/a1_const.xacro"/>
+
+    <!-- real height measured from rosbags -->
+    <xacro:property name="base_link_height" value="0.283"/> 
+
+    <!-- backpack (box approx) size and center position relative to base_link -->
+    <xacro:property name="backpack_length" value="0.28"/>
+    <xacro:property name="backpack_width" value="0.194"/> 
+    <xacro:property name="backpack_height" value="0.089"/>
+
+    <xacro:property name="backpack_x" value="0.0"/> 
+    <xacro:property name="backpack_y" value="0.0"/>
+    <xacro:property name="backpack_z" value="${backpack_height/2 + trunk_height/2}"/>
+
+    <!-- lidar base position relative to base_link -->
+    <xacro:property name="laser_base_x" value="0.0415"/>
+    <xacro:property name="laser_base_y" value="0.0"/>
+    <xacro:property name="laser_base_z" value="0.146"/>
+
+
+
+    <!--whole robot box collision approx (used for trunk collision), except for hokuyo -->
+    <xacro:property name="boxcoll_length_front" value="${backpack_length/2 + 0.14}"/>
+    <xacro:property name="boxcoll_length_back" value="${backpack_length/2 + 0.18}"/>
+
+    <xacro:property name="boxcoll_length" value="${boxcoll_length_front + boxcoll_length_back}"/>
+    <xacro:property name="boxcoll_width" value="${backpack_width + 0.10}"/>
+    <xacro:property name="boxcoll_height" value="${base_link_height+backpack_height/2+trunk_height/2}"/>
+
+    <xacro:property name="boxcoll_x" value="${boxcoll_length_front/2-boxcoll_length_back/2}"/>
+    <xacro:property name="boxcoll_y" value="0"/>
+    <xacro:property name="boxcoll_z" value="${trunk_height/4.0+backpack_height/4-base_link_height/2.0}"/>
+
+    <!-- <xacro:property name="boxcoll_length" value="${trunk_length}"/>
+    <xacro:property name="boxcoll_width" value="${trunk_width}"/>
+    <xacro:property name="boxcoll_height" value="${base_link_height+trunk_height/2}"/>
+
+    <xacro:property name="boxcoll_x" value="0"/>
+    <xacro:property name="boxcoll_y" value="0"/>
+    <xacro:property name="boxcoll_z" value="${trunk_height/4.0-base_link_height/2.0}"/> -->
+
+    <!-- legs position used only for visualization (calculated using  base_link_height,thigh_length=calf_length) -->
+    <xacro:property name="leg_thigh_angle" value="0.79"/>
+    <xacro:property name="leg_calf_angle" value="-1.68"/> 
+    
+    <!-- legs visual boxes approx (just for visualization). Positions relative to base link -->
+    <!-- <xacro:property name="floor_z" value="${-trunk_height/2-base_link_height}"/>
+
+    <xacro:property name="leg_length" value="0.15"/>
+    <xacro:property name="leg_width" value="0.6"/>
+    <xacro:property name="leg_height" value="${base_link_height+trunk_height}"/>
+
+    <xacro:property name="FR_leg_x" value="0.15"/>
+    <xacro:property name="FR_leg_y" value="${-boxcoll_width/2+leg_width/2}"/>
+    <xacro:property name="FR_leg_z" value="${floor_z+leg_height/2}"/>
+
+    <xacro:property name="FL_leg_x" value="0.15"/>
+    <xacro:property name="FL_leg_y" value="${boxcoll_width/2-leg_width/2}"/>
+    <xacro:property name="FL_leg_z" value="${floor_z+leg_height/2}"/>
+
+    <xacro:property name="BR_leg_x" value="${-trunk_length/2-0.075}"/>
+    <xacro:property name="BR_leg_y" value="${-boxcoll_width/2+leg_width/2}"/>
+    <xacro:property name="BR_leg_z" value="${floor_z+leg_height/2}"/>
+
+    <xacro:property name="BL_leg_x" value="${-trunk_length/2-0.075}"/>
+    <xacro:property name="BL_leg_y" value="${boxcoll_width/2-leg_width/2}"/>
+    <xacro:property name="BL_leg_z" value="${floor_z+leg_height/2}"/> -->
+
+
+
+</robot>

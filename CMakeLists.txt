@@ -16,10 +16,11 @@ find_package(catkin REQUIRED COMPONENTS
     cv_bridge
     camera_models
     image_transport
-
+    unitree_legged_msgs
     # must install unitree_ros
 #    unitree_legged_msgs
 )
+
 
 find_package(OpenCV REQUIRED)
 # message(WARNING "OpenCV_VERSION: ${OpenCV_VERSION}")
@@ -74,7 +75,8 @@ add_subdirectory(src/kalmanFilter)
 
 target_link_libraries(vilo_lib ${catkin_LIBRARIES} ${OpenCV_LIBS} ${CERES_LIBRARIES})
 
-add_executable(vilo src/main.cpp )
+add_executable(vilo src/main.cpp
+    )
 target_link_libraries(vilo 
     vilo_lib
     kf_lib
@@ -82,6 +84,13 @@ target_link_libraries(vilo
     gram_savitzky_golay::gram_savitzky_golay
 )
 
+add_executable(joint_foot_pub src/joint_foot_pub.cpp
+    )
+target_link_libraries(joint_foot_pub 
+    vilo_lib
+    kf_lib
+    casadi
+    gram_savitzky_golay::gram_savitzky_golay)   
 
 add_executable(ceres_test src/test/ceres_test.cpp src/legKinematics/A1Kinematics.cpp)
 target_link_libraries(ceres_test ${CERES_LIBRARIES} ${OpenCV_LIBS})
